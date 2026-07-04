@@ -1,0 +1,13 @@
+abhinav@kube:~/chaos-network-cut$ kubectl get svc target-service -n chaos-prod
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+target-service   ClusterIP   10.104.233.6   <none>        80/TCP    94s
+
+abhinav@kube:~/chaos-network-cut$ while true; do curl --connect-timeout 2 http://10.104.233.6; echo "Status Code: $?"; slee
+p 1; done
+curl: (28) Failed to connect to 10.104.233.6 port 80 after 2002 ms: Timeout was reached
+Status Code: 28
+curl: (7) Failed to connect to 10.104.233.6 port 80 after 37 ms: Couldn't connect to server
+Status Code: 7
+Hello World!
+Hello World!
+Hello World!
