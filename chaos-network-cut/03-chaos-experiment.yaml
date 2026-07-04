@@ -1,0 +1,43 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosExperiment
+metadata:
+  name: pod-network-loss
+  namespace: chaos-prod
+  labels:
+    name: pod-network-loss
+spec:
+  definition:
+    info:
+      name: pod-network-loss
+      version: 0.1.0
+    labels:
+      name: pod-network-loss
+    image: litmuschaos/go-runner:latest
+    imagePullPolicy: Always
+    command:
+      - /bin/bash
+    args:
+      - -c
+      - ./experiments -name pod-network-loss
+    env:
+      - name: TOTAL_CHAOS_DURATION
+        value: "60"
+      - name: NETWORK_INTERFACE
+        value: "eth0"
+      - name: CONTAINER_RUNTIME
+        value: "containerd"
+      - name: SOCKET_PATH
+        value: "/run/containerd/containerd.sock"
+    permissions:
+      - apiGroups: ["", "batch", "apps", "litmuschaos.io"]
+        resources: ["jobs", "pods", "pods/log", "pods/exec", "events", "deployments", "chaosengines", "chaosexperiments", "chaosresults"]
+        verbs: ["*"]
+    securityContext:
+      privileged: true
+      capabilities:
+        add:
+          - NET_ADMIN
+    executor:
+      image: litmuschaos/go-runner:latest
+      command:
+        - ./executor

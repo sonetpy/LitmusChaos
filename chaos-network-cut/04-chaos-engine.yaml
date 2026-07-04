@@ -1,0 +1,23 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: network-loss-engine
+  namespace: chaos-prod
+spec:
+  appinfo:
+    appns: "chaos-prod"
+    applabel: "app=network-target"
+    appkind: "deployment"
+  chaosServiceAccount: network-loss-sa
+  containerRuntimeSpec:
+    containerRuntime: "containerd"
+    socketPath: "/run/containerd/containerd.sock"
+  experiments:
+    - name: pod-network-loss
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
+            - name: NETWORK_PACKET_LOSS_PERCENTAGE
+              value: "100"
