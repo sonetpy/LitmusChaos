@@ -1,0 +1,39 @@
+apiVersion: litmuschaos.io/v1alpha1
+description:
+  message: |
+    Injects cpu consumption on pods belonging to an app deployment
+kind: ChaosExperiment
+metadata:
+  name: pod-cpu-hog
+  namespace: chaos-cpu-test
+spec:
+  definition:
+    scope: Namespaced
+    permissions:
+      - apiGroups: ["", "batch", "apps", "litmuschaos.io"]
+        resources: ["jobs", "pods", "pods/log", "events", "chaosengines", "chaosexperiments", "chaosresults", "pods/exec"]
+        verbs: ["create", "list", "get", "patch", "update", "delete"]
+    image: "litmuschaos.docker.scarf.sh/litmuschaos/go-runner:3.30.0"
+    imagePullPolicy: Always
+    args:
+      - -c
+      - ./experiments -name pod-cpu-hog
+    command:
+      - /bin/bash
+    env:
+      - name: TOTAL_CHAOS_DURATION
+        value: "60"
+      - name: CPU_CORES
+        value: "1"
+      - name: CPU_LOAD
+        value: "100"
+      - name: PODS_AFFECTED_PERC
+        value: "100"
+      - name: SEQUENCE
+        value: parallel
+      - name: CONTAINER_RUNTIME
+        value: "containerd"
+      - name: SOCKET_PATH
+        value: "/run/containerd/containerd.sock"
+    labels:
+      name: pod-cpu-hog
