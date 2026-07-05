@@ -1,0 +1,25 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: cpu-hog-engine
+  namespace: chaos-cpu-test
+spec:
+  engineState: "active"
+  chaosServiceAccount: cpu-hog-sa
+  appinfo:
+    appns: "chaos-cpu-test"
+    applabel: "app=cpu-hog-target"
+    appkind: "deployment"
+  experiments:
+    - name: pod-cpu-hog
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: '45'
+            - name: CPU_CORES
+              value: '2'
+            - name: CONTAINER_RUNTIME
+              value: 'containerd'
+            - name: SOCKET_PATH
+              value: '/run/containerd/containerd.sock'
